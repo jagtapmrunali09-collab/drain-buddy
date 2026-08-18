@@ -1,0 +1,64 @@
+{
+  "users": [],
+  "otps": [],
+  "wards": [
+    { "id": "W1", "name": "Kothrud",     "lat": 18.5074, "lng": 73.8077, "risk": "medium", "drains": 42, "lastInspected": "2026-08-15T06:00:00.000Z" },
+    { "id": "W2", "name": "Shivajinagar","lat": 18.5304, "lng": 73.8567, "risk": "high",   "drains": 58, "lastInspected": "2026-08-16T06:00:00.000Z" },
+    { "id": "W3", "name": "Hadapsar",    "lat": 18.5089, "lng": 73.9260, "risk": "low",    "drains": 35, "lastInspected": "2026-08-14T06:00:00.000Z" },
+    { "id": "W4", "name": "Aundh",       "lat": 18.5610, "lng": 73.8080, "risk": "medium", "drains": 30, "lastInspected": "2026-08-15T06:00:00.000Z" },
+    { "id": "W5", "name": "Kharadi",     "lat": 18.5510, "lng": 73.9490, "risk": "high",   "drains": 47, "lastInspected": "2026-08-16T06:00:00.000Z" },
+    { "id": "W6", "name": "Katraj",      "lat": 18.4480, "lng": 73.8590, "risk": "low",    "drains": 26, "lastInspected": "2026-08-13T06:00:00.000Z" }
+  ],
+  "sensors": [
+    { "id": "S-101", "wardId": "W1", "lat": 18.5081, "lng": 73.8090, "type": "water-level", "status": "normal",  "value": 22, "unit": "cm", "updatedAt": "2026-08-18T05:00:00.000Z" },
+    { "id": "S-102", "wardId": "W2", "lat": 18.5311, "lng": 73.8579, "type": "water-level", "status": "critical","value": 87, "unit": "cm", "updatedAt": "2026-08-18T05:00:00.000Z" },
+    { "id": "S-103", "wardId": "W2", "lat": 18.5297, "lng": 73.8555, "type": "blockage",    "status": "warning", "value": 68, "unit": "% blocked", "updatedAt": "2026-08-18T05:00:00.000Z" },
+    { "id": "S-104", "wardId": "W3", "lat": 18.5095, "lng": 73.9271, "type": "water-level", "status": "normal",  "value": 14, "unit": "cm", "updatedAt": "2026-08-18T05:00:00.000Z" },
+    { "id": "S-105", "wardId": "W4", "lat": 18.5617, "lng": 73.8092, "type": "flow",        "status": "normal",  "value": 3.1,"unit": "m/s", "updatedAt": "2026-08-18T05:00:00.000Z" },
+    { "id": "S-106", "wardId": "W5", "lat": 18.5522, "lng": 73.9502, "type": "blockage",    "status": "critical","value": 91, "unit": "% blocked", "updatedAt": "2026-08-18T05:00:00.000Z" },
+    { "id": "S-107", "wardId": "W6", "lat": 18.4491, "lng": 73.8602, "type": "water-level", "status": "normal",  "value": 9,  "unit": "cm", "updatedAt": "2026-08-18T05:00:00.000Z" }
+  ],
+  "complaints": [
+    {
+      "id": "C-1001",
+      "citizenId": "demo",
+      "citizenName": "Demo Citizen",
+      "title": "Overflowing drain near bus stop",
+      "description": "Drain has been overflowing for two days, water is entering the shop fronts on the main road.",
+      "category": "Blockage",
+      "photoName": null,
+      "lat": 18.5304,
+      "lng": 73.8567,
+      "wardId": "W2",
+      "status": "in-progress",
+      "priority": "high",
+      "deadline": "2026-08-20T18:00:00.000Z",
+      "createdAt": "2026-08-16T09:12:00.000Z",
+      "updates": [
+        { "at": "2026-08-16T09:12:00.000Z", "note": "Complaint received and logged.", "by": "system" },
+        { "at": "2026-08-16T14:40:00.000Z", "note": "Field crew assigned, priority marked high due to overlapping IoT alert.", "by": "officer" }
+      ]
+    },
+    {
+      "id": "C-1002",
+      "citizenId": "demo",
+      "citizenName": "Demo Citizen",
+      "title": "Garbage choking storm drain",
+      "description": "Plastic waste piling up at the storm drain inlet outside the society gate.",
+      "category": "Garbage",
+      "photoName": null,
+      "lat": 18.5074,
+      "lng": 73.8077,
+      "wardId": "W1",
+      "status": "resolved",
+      "priority": "medium",
+      "deadline": "2026-08-14T18:00:00.000Z",
+      "createdAt": "2026-08-10T11:00:00.000Z",
+      "updates": [
+        { "at": "2026-08-10T11:00:00.000Z", "note": "Complaint received and logged.", "by": "system" },
+        { "at": "2026-08-11T09:00:00.000Z", "note": "Cleaning crew dispatched.", "by": "officer" },
+        { "at": "2026-08-12T16:00:00.000Z", "note": "Drain cleared and inspected. Marked resolved.", "by": "officer" }
+      ]
+    }
+  ]
+}
