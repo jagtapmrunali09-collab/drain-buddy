@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
+const BASE_URL = import.meta.env.VITE_API_URL || "https://drain-buddy.onrender.com";
 
 async function request(path, { method = "GET", body, token, formData } = {}) {
   const headers = {};
