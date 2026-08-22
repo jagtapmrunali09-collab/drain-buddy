@@ -5,7 +5,7 @@ import { api } from "../api";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: "", email: "", password: "", role: "citizen" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", role: "citizen", officerCode: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -97,6 +97,21 @@ export default function Signup() {
             </button>
           </div>
         </div>
+
+        {form.role === "officer" && (
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">Municipal Corporation Branch Code</label>
+            <input
+              type="text"
+              required
+              placeholder="e.g. PMC-001"
+              value={form.officerCode}
+              onChange={(e) => update("officerCode", e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+            />
+            <p className="text-xs text-gray-500 mt-1">Provided by your municipal corporation to verify your branch/ward.</p>
+          </div>
+        )}
 
         {error && (
           <div className="p-3 text-sm text-red-500 bg-red-50 rounded-lg">

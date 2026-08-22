@@ -213,6 +213,16 @@ function ComplaintRow({ complaint, onUpdate }) {
       </div>
       <p className="text-sm text-ink/80 mb-4">{complaint.description}</p>
 
+      {complaint.photoName ? (
+        <img
+          src={`${api.base}/uploads/${complaint.photoName}`}
+          alt="Reported issue"
+          className="w-full max-w-sm rounded-lg border border-line mb-4 object-cover max-h-64"
+        />
+      ) : (
+        <p className="text-xs text-subink mb-4 italic">No photo attached</p>
+      )}
+
       <div className="grid sm:grid-cols-4 gap-3 items-end">
         <div>
           <label className="label">Status</label>
