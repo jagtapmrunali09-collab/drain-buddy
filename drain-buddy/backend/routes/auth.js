@@ -4,8 +4,17 @@ import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
 import { readDB, writeDB } from "../utils/db.js";
 import { requireAuth } from "../middleware/auth.js";
+import { sendOtpEmail } from "../utils/mailer.js";
 
 const router = Router();
+
+// Valid municipal officer branch codes. Add real ones for your city here.
+const OFFICER_BRANCHES = {
+  "PMC-001": "Pune Municipal Corporation – Kothrud Ward",
+  "PMC-002": "Pune Municipal Corporation – Shivajinagar Ward",
+  "PMC-003": "Pune Municipal Corporation – Hadapsar Ward",
+  "PCMC-001": "Pimpri-Chinchwad Municipal Corporation – HQ",
+};
 
 function signToken(user) {
   return jwt.sign(
@@ -20,15 +29,25 @@ function publicUser(user) {
   return rest;
 }
 
-// POST /api/auth/signup  -> creates an unverified account and issues an OTP
+// POST /api/auth/signup  -> creates an unverified account and emails an OTP
 router.post("/signup", async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, officerCode } = req.body;
   if (!name || !email || !password) {
     return res.status(400).json({ error: "Name, email and password are required." });
   }
   if (password.length < 6) {
     return res.status(400).json({ error: "Password must be at least 6 characters." });
   }
+
+  const isOfficer = role === "officer";
+  let branchName = null;
+  if (isOfficer) {
+    if (!officerCode || !OFFICER_BRANCHES[officerCode.toUpperCase()]) {
+      return res.status(400).json({ error: "Invalid municipal officer branch code. Please check the code provided by your corporation." });
+    }
+    branchName = OFFICER_BRANCHES[officerCode.toUpperCase()];
+  }
+
   const db = readDB();
   const existing = db.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
   if (existing) {
@@ -40,7 +59,9 @@ router.post("/signup", async (req, res) => {
     name,
     email,
     passwordHash,
-    role: role === "officer" ? "officer" : "citizen",
+    role: isOfficer ? "officer" : "citizen",
+    officerCode: isOfficer ? officerCode.toUpperCase() : null,
+    branchName,
     verified: false,
     createdAt: new Date().toISOString(),
   };
@@ -51,12 +72,17 @@ router.post("/signup", async (req, res) => {
   db.otps.push({ email, code, expiresAt: Date.now() + 10 * 60 * 1000 });
   writeDB(db);
 
-  // In production, send this code by email (see README for wiring up a real SMTP/nodemailer sender).
-  // For this demo build we return it directly so the flow works without external services.
-  res.status(201).json({
-    message: "Account created. Enter the verification code to activate it.",
-    devVerificationCode: code,
-  });
+  try {
+    await sendOtpEmail(email, code, isOfficer ? "municipal officer" : "citizen");
+    res.status(201).json({ message: "Account created. Check your email for the verification code." });
+  } catch (err) {
+    console.error("Failed to send OTP email:", err.message);
+    // Fallback so testing/demo isn't blocked if email sending fails
+    res.status(201).json({
+      message: "Account created. Email sending failed, use this code instead.",
+      devVerificationCode: code,
+    });
+  }
 });
 
 // POST /api/auth/verify
@@ -77,7 +103,7 @@ router.post("/verify", (req, res) => {
 });
 
 // POST /api/auth/resend-code
-router.post("/resend-code", (req, res) => {
+router.post("/resend-code", async (req, res) => {
   const { email } = req.body;
   const db = readDB();
   const user = db.users.find((u) => u.email.toLowerCase() === (email || "").toLowerCase());
@@ -86,7 +112,14 @@ router.post("/resend-code", (req, res) => {
   db.otps = db.otps.filter((o) => o.email.toLowerCase() !== email.toLowerCase());
   db.otps.push({ email, code, expiresAt: Date.now() + 10 * 60 * 1000 });
   writeDB(db);
-  res.json({ message: "A new code has been generated.", devVerificationCode: code });
+
+  try {
+    await sendOtpEmail(email, code, user.role === "officer" ? "municipal officer" : "citizen");
+    res.json({ message: "A new code has been sent to your email." });
+  } catch (err) {
+    console.error("Failed to resend OTP email:", err.message);
+    res.json({ message: "Email sending failed, use this code instead.", devVerificationCode: code });
+  }
 });
 
 // POST /api/auth/login
